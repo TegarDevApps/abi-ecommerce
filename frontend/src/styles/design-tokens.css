@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================================
+   AJAK ABI STORE — PREMIUM DESIGN TOKENS & CUSTOM UTILITIES
+   Reference: Uniqlo/Muji Modern Editorial + Earthy Religious Tone (Section 5)
+============================================================================ */
+
+:root {
+  /* Brand Palette (Earthy Ihram Warmth) */
+  --primary: #6B4F3B;
+  --primary-dark: #4A3527;
+  --accent-gold: #C9A227;
+  --sage: #7C8B6F;
+  --ink: #1F1B16;
+  --muted: #766F63;
+  --surface: #FFFFFF;
+  --surface-warm: #FBF8F3;
+  --success: #3E7B4F;
+  --danger: #B5473A;
+
+  /* Typography */
+  --font-serif: 'Fraunces', 'Playfair Display', serif;
+  --font-sans: 'Inter', 'Plus Jakarta Sans', sans-serif;
+
+  /* Elevation & Borders */
+  --border-subtle: 1px solid rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.09);
+
+  /* Radii */
+  --radius-button: 8px;
+  --radius-card: 12px;
+  --radius-drawer: 20px;
+}
+
+@layer base {
+  body {
+    @apply bg-[#FBF8F3] text-[#1F1B16] font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif text-[#1F1B16] tracking-tight;
+  }
+}
+
+/* Tabular numbers for price alignments in product grids and invoices */
+.tabular-price {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.015em;
+}
+
+/* Custom minimal border product card (Prohibited: generic marketplace shadows or neon badges) */
+.premium-card-border {
+  border: var(--border-subtle);
+  background-color: var(--surface);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.premium-card-border:hover {
+  transform: scale(1.015);
+  box-shadow: var(--shadow-card);
+}
+
+/* Custom scrollbar for modern aesthetics */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F2EDE5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #B5A89B;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6B4F3B;
+}
+
+/* Hide scrollbar for category sliders */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
