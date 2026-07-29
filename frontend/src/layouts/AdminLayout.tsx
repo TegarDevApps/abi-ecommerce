@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Package,
@@ -23,7 +23,15 @@ import { useAuthStore } from '../store/authStore';
 export const AdminLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, toggleRole, logout } = useAuthStore();
+  const { user, isAuthenticated, isLoadingAuth, logout } = useAuthStore();
+
+  if (isLoadingAuth) {
+    return <div className="min-h-screen bg-[#2C241D] flex items-center justify-center text-[#EDE7DE]">Memeriksa Autentikasi Admin...</div>;
+  }
+
+  if (!isAuthenticated || user?.role !== 'admin') {
+    return <Navigate to="/admin-login" replace />;
+  }
 
   const navItems = [
     { title: 'Overview & Analisis', path: '/admin', icon: LayoutDashboard },
@@ -39,7 +47,6 @@ export const AdminLayout: React.FC = () => {
   ];
 
   const handleSwitchToStore = () => {
-    toggleRole();
     navigate('/');
   };
 

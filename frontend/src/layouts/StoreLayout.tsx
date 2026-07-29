@@ -50,7 +50,7 @@ export const StoreLayout: React.FC = () => {
   const location = useLocation();
   const { openDrawer, getTotalCount, isBouncing } = useCartStore();
   const wishlistItems = useWishlistStore((s) => s.items);
-  const { user, activeRole, toggleRole } = useAuthStore();
+  const { user, isAuthenticated, activeRole } = useAuthStore();
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -273,39 +273,40 @@ export const StoreLayout: React.FC = () => {
             {/* Account / Role Button */}
             <div className="flex items-center gap-2 pl-2 sm:border-l border-[#EDE7DE]">
               <Link
-                to="/akun"
+                to={isAuthenticated ? "/akun" : "/masuk"}
                 className="flex items-center gap-2 p-2 px-3 hover:bg-[#F5F0EA] rounded-full sm:rounded-button transition-colors text-xs font-semibold text-ink group"
               >
                 <div className="w-7 h-7 rounded-full bg-[#EDE7DE] flex items-center justify-center overflow-hidden border border-[#DCD3C6]">
-                  {user ? (
+                  {isAuthenticated && user?.avatar_url ? (
                     <img src={user.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
                   ) : (
                     <User className="w-4 h-4 text-primary" />
                   )}
                 </div>
                 <div className="hidden lg:flex flex-col text-left leading-tight">
-                  <span className="text-ink font-bold group-hover:text-primary transition-colors">{user?.full_name || 'Masuk / Akun'}</span>
-                  <span className="text-[10px] text-[#766F63] uppercase">{activeRole} Profile</span>
+                  <span className="text-ink font-bold group-hover:text-primary transition-colors">
+                    {isAuthenticated && user ? user.full_name : 'Masuk / Daftar'}
+                  </span>
+                  <span className="text-[10px] text-[#766F63] uppercase">
+                    {isAuthenticated ? `${user?.role || 'Member'} Profile` : 'Member Area'}
+                  </span>
                 </div>
               </Link>
 
-              {/* DEMO TOOL: Quick Switcher between Customer & Admin Portal */}
+              {/* Robust Navigation to Admin Portal */}
               <button
                 onClick={() => {
-                  toggleRole();
-                  if (activeRole === 'customer') {
+                  if (isAuthenticated && user?.role === 'admin') {
                     navigate('/admin');
                   } else {
-                    navigate('/');
+                    navigate('/admin-login');
                   }
                 }}
-                title={`Aktif sebagai: ${activeRole.toUpperCase()}. Klik untuk ganti role demonya!`}
-                className={`text-[10px] font-bold px-2.5 py-1 rounded-full border transition-all flex items-center gap-1 shadow-sm ${
-                  activeRole === 'admin' ? 'bg-[#C9A227] text-white border-yellow-500' : 'bg-[#EFEAE2] hover:bg-[#E4DDD2] text-[#6B4F3B] border-[#DED5CA]'
-                }`}
+                title="Buka Portal Konsol Operasional Gudang & Owner"
+                className="text-[10px] font-bold px-2.5 py-1.5 rounded-full border transition-all flex items-center gap-1.5 bg-[#2C241D] text-[#C9A227] hover:bg-[#3E332B] border-[#4A3C30] shadow-sm"
               >
-                <Settings className="w-3 h-3" />
-                <span>{activeRole === 'admin' ? '⚙️ Admin View' : '🛍️ Customer View'}</span>
+                <Settings className="w-3 h-3 text-[#C9A227]" />
+                <span>⚙️ Portal Admin</span>
               </button>
             </div>
 
@@ -379,9 +380,9 @@ export const StoreLayout: React.FC = () => {
               <Link to="/produk?category=paket-bundling" className="text-[#C9A227] font-bold hover:underline flex items-center gap-1 py-2">
                 <span>🎁 Paket Bundling Umrah</span>
               </Link>
-              <Link to="/produk?category=perlengkapan-ihram" className="hover:text-ink py-2 transition-colors">Kain Ihram Organik</Link>
-              <Link to="/produk?category=perlengkapan-sholat" className="hover:text-ink py-2 transition-colors">Mukena Travel Sutra</Link>
-              <Link to="/produk?category=koper-tas-travel" className="hover:text-ink py-2 transition-colors">Koper TSA 24"</Link>
+              <Link to="/produk?category=baju-kain-ihram-pria" className="hover:text-ink py-2 transition-colors">Kain Ihram Organik</Link>
+              <Link to="/produk?category=mukena-hijab-travel" className="hover:text-ink py-2 transition-colors">Mukena Travel Sutra</Link>
+              <Link to="/produk?category=koper-tas-haji-umrah" className="hover:text-ink py-2 transition-colors">Koper TSA 24"</Link>
               <Link to="/bantuan" className="text-[#766F63] hover:text-ink py-2 transition-colors">Cara Belanja & FAQ</Link>
             </nav>
 
@@ -498,11 +499,11 @@ export const StoreLayout: React.FC = () => {
             <div>
               <h5 className="font-serif font-bold text-sm text-white mb-4 uppercase tracking-wider">Koleksi Produk</h5>
               <ul className="space-y-2.5 text-sm text-[#B5AC9F]">
-                <li><Link to="/produk?category=perlengkapan-ihram" className="hover:text-white transition-colors">Perlengkapan Ihram Pria</Link></li>
-                <li><Link to="/produk?category=perlengkapan-sholat" className="hover:text-white transition-colors">Mukena Sutra Anti Kusut</Link></li>
-                <li><Link to="/produk?category=koper-tas-travel" className="hover:text-white transition-colors">Koper Hardcase Aluminium TSA</Link></li>
-                <li><Link to="/produk?category=kesehatan-obat-perjalanan" className="hover:text-white transition-colors">Kit Stamina & Herbal Umrah</Link></li>
-                <li><Link to="/produk?category=paket-bundling" className="text-[#C9A227] font-semibold hover:underline">Paket Bundling Ekonomis</Link></li>
+                <li><Link to="/produk?category=baju-kain-ihram-pria" className="hover:text-white transition-colors">Perlengkapan Ihram Pria</Link></li>
+                <li><Link to="/produk?category=mukena-hijab-travel" className="hover:text-white transition-colors">Mukena Sutra Anti Kusut</Link></li>
+                <li><Link to="/produk?category=koper-tas-haji-umrah" className="hover:text-white transition-colors">Koper Hardcase Aluminium TSA</Link></li>
+                <li><Link to="/produk?category=air-zam-zam-murni" className="hover:text-white transition-colors">Air Zam-Zam Murni Original</Link></li>
+                <li><Link to="/produk?category=paket-bundling" className="text-[#C9A227] font-semibold hover:underline">Paket Bundling Mabrur VIP</Link></li>
               </ul>
             </div>
 

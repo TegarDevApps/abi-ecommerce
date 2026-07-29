@@ -1,11 +1,18 @@
 import React from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, Navigate } from 'react-router-dom';
 import { User, MapPin, ShoppingBag, Heart, MessageSquare, LogOut, ShieldCheck } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 
 export const AccountLayout: React.FC = () => {
   const location = useLocation();
-  const { user, logout } = useAuthStore();
+  const { user, isAuthenticated, isLoadingAuth, logout } = useAuthStore();
+
+  if (isLoadingAuth) {
+    return <div className="py-20 text-center text-sm text-[#766F63]">Memuat Profil Jamaah...</div>;
+  }
+  if (!isAuthenticated) {
+    return <Navigate to="/masuk" replace />;
+  }
 
   // Explicit instruction: NO heavy admin sidebar dashboard! Lightweight horizontal tabs for online retail experience.
   const tabs = [

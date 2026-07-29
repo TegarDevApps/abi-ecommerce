@@ -9,6 +9,7 @@
     "preview": "vite preview --port 5173"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.109.0",
     "@tanstack/react-query": "^5.35.0",
     "axios": "^1.7.2",
     "lucide-react": "^0.384.0",

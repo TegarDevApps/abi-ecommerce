@@ -36,16 +36,24 @@ export const CatalogPage: React.FC = () => {
   // Synchronize filter state when URL searchParams change
   useEffect(() => {
     const cat = searchParams.get('category');
+    const bundling = searchParams.get('is_bundling');
     const q = searchParams.get('search');
+    
     if (cat && cat !== selectedCategory) {
       setSelectedCategory(cat);
-      if (cat === 'paket-bundling') setOnlyBundling(true);
-      else setOnlyBundling(false);
+      if (cat === 'paket-bundling' || bundling === 'true') {
+        setOnlyBundling(true);
+      } else {
+        setOnlyBundling(false);
+      }
+    } else if (bundling === 'true') {
+      setOnlyBundling(true);
     }
+    
     if (q !== null && q !== searchQuery) {
       setSearchQuery(q);
     }
-  }, [searchParams]);
+  }, [searchParams, selectedCategory, searchQuery]);
 
   // Compute filtered & sorted list
   const filteredProducts = useMemo(() => {
@@ -53,12 +61,12 @@ export const CatalogPage: React.FC = () => {
 
     // Category filter
     if (selectedCategory !== 'all' && selectedCategory !== 'paket-bundling') {
-      result = result.filter((p) => p.category?.slug === selectedCategory);
+      result = result.filter((p: any) => p.category?.slug === selectedCategory || p.category_slug === selectedCategory);
     }
 
     // Bundling filter
-    if (onlyBundling || selectedCategory === 'paket-bundling') {
-      result = result.filter((p) => p.is_bundling);
+    if (onlyBundling || selectedCategory === 'paket-bundling' || searchParams.get('is_bundling') === 'true') {
+      result = result.filter((p: any) => p.is_bundling);
     }
 
     // Search query

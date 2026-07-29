@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { db } from '../db/localDb';
+import { getLiveBanners, getLiveCategories, getLiveProductsWithRelations, getLiveProductBySlug, getLiveReviewsByProductId } from '../db/supabaseClient';
 import { MidtransSandboxService } from '../services/midtransService';
 import { ShippingCalculatorService } from '../services/shippingService';
 import { broadcastOrderStatus } from '../websocket/wsServer';
@@ -10,89 +11,88 @@ import { StoreProduct, StoreOrder, StoreOrderItem, StorePayment, StoreCartItem, 
 export const apiRouter = Router();
 
 // ============================================================================
-// 1. PUBLIC CATALOG & BANNERS (CMS Lite)
+// 1. PUBLIC CATALOG & BANNERS (CMS Lite - Supabase Live Hybrid)
 // ============================================================================
 
 // Get Active Banners for Homepage Hero
-apiRouter.get('/banners', (req: Request, res: Response) => {
-  const activeBanners = db.banners
-    .filter((b) => b.is_active)
-    .sort((a, b) => a.sort_order - b.sort_order);
+apiRouter.get('/banners', async (req: Request, res: Response) => {
+  const activeBanners = await getLiveBanners();
   res.json({ success: true, data: activeBanners });
 });
 
 // Get Categories Tree for Mega Menu & Filters
-apiRouter.get('/categories', (req: Request, res: Response) => {
-  const sorted = [...db.categories].sort((a, b) => a.sort_order - b.sort_order);
+apiRouter.get('/categories', async (req: Request, res: Response) => {
+  const sorted = await getLiveCategories();
   res.json({ success: true, data: sorted });
 });
 
 // Get Products with Filtering, Search Autocomplete, and Sorting
-apiRouter.get('/products', (req: Request, res: Response) => {
+apiRouter.get('/products', async (req: Request, res: Response) => {
   const { category, search, min_price, max_price, sort, featured, is_bundling } = req.query;
 
-  let products = db.getProductsWithRelations().filter((p) => p.status === 'active');
+  let products = await getLiveProductsWithRelations();
+  products = products.filter((p: any) => p.status === 'active');
 
-  // Filter by category slug
+  // Filter by category slug or category_slug property
   if (category && typeof category === 'string' && category !== 'all') {
-    products = products.filter((p) => p.category?.slug === category);
+    products = products.filter((p: any) => p.category?.slug === category || p.category_slug === category);
   }
 
   // Filter by bundling
   if (is_bundling === 'true') {
-    products = products.filter((p) => p.is_bundling);
+    products = products.filter((p: any) => p.is_bundling);
   }
 
   // Filter by featured
   if (featured === 'true') {
-    products = products.filter((p) => p.is_featured);
+    products = products.filter((p: any) => p.is_featured);
   }
 
   // Filter by search term (name, description, brand, tags)
   if (search && typeof search === 'string' && search.trim() !== '') {
     const q = search.toLowerCase().trim();
     products = products.filter(
-      (p) => p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)
+      (p: any) => (p.name || '').toLowerCase().includes(q) || (p.brand || '').toLowerCase().includes(q) || (p.description || '').toLowerCase().includes(q)
     );
   }
 
   // Filter by price range
   if (min_price && !isNaN(Number(min_price))) {
-    products = products.filter((p) => (p.discount_price ?? p.base_price) >= Number(min_price));
+    products = products.filter((p: any) => (p.discount_price ?? p.base_price ?? 0) >= Number(min_price));
   }
   if (max_price && !isNaN(Number(max_price))) {
-    products = products.filter((p) => (p.discount_price ?? p.base_price) <= Number(max_price));
+    products = products.filter((p: any) => (p.discount_price ?? p.base_price ?? 0) <= Number(max_price));
   }
 
   // Sorting: terlaris (review_count), termurah, terbaru, rating tertinggi
   if (sort === 'terlaris') {
-    products.sort((a, b) => b.review_count - a.review_count);
+    products.sort((a: any, b: any) => (b.review_count || 0) - (a.review_count || 0));
   } else if (sort === 'termurah') {
-    products.sort((a, b) => (a.discount_price ?? a.base_price) - (b.discount_price ?? b.base_price));
+    products.sort((a: any, b: any) => (a.discount_price ?? a.base_price ?? 0) - (b.discount_price ?? b.base_price ?? 0));
   } else if (sort === 'termahal') {
-    products.sort((a, b) => (b.discount_price ?? b.base_price) - (a.discount_price ?? a.base_price));
+    products.sort((a: any, b: any) => (b.discount_price ?? b.base_price ?? 0) - (a.discount_price ?? a.base_price ?? 0));
   } else if (sort === 'rating') {
-    products.sort((a, b) => b.rating_avg - a.rating_avg);
+    products.sort((a: any, b: any) => (b.rating_avg || 0) - (a.rating_avg || 0));
   }
 
   res.json({ success: true, count: products.length, data: products });
 });
 
 // Get Single Product by Slug + Frequently Bought Together
-apiRouter.get('/products/:slug', (req: Request, res: Response) => {
-  const product = db.getProductBySlug(req.params.slug);
+apiRouter.get('/products/:slug', async (req: Request, res: Response) => {
+  const product = await getLiveProductBySlug(req.params.slug);
   if (!product) {
-    return res.status(404).json({ success: false, error: 'Produk tidak ditemukan' });
+    return res.status(404).json({ success: false, error: 'Produk tidak ditemukan di database' });
   }
 
   // Get cross-sell / related items (same category or frequently bought travel accessories)
-  const related = db
-    .getProductsWithRelations()
-    .filter((p) => p.id !== product.id && p.status === 'active')
+  const allProds = await getLiveProductsWithRelations();
+  const related = allProds
+    .filter((p: any) => p.id !== product.id && p.status === 'active')
     .slice(0, 4);
 
   // Get customer reviews
-  const reviews = db.reviews.filter((r) => r.product_id === product.id && r.status === 'published');
+  const reviews = await getLiveReviewsByProductId(product.id);
 
   res.json({
     success: true,
@@ -554,8 +554,9 @@ apiRouter.get('/admin/overview', (req: Request, res: Response) => {
 });
 
 // Admin Product CRUD
-apiRouter.get('/admin/products', (req: Request, res: Response) => {
-  res.json({ success: true, data: db.getProductsWithRelations() });
+apiRouter.get('/admin/products', async (req: Request, res: Response) => {
+  const prods = await getLiveProductsWithRelations();
+  res.json({ success: true, data: prods });
 });
 
 apiRouter.post('/admin/products', (req: Request, res: Response) => {
