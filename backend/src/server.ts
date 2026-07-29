@@ -50,12 +50,17 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-// Start Server
-const PORT = config.PORT || 4000;
-httpServer.listen(PORT, () => {
-  console.log('================================================================');
-  console.log(`✨ [Ajak Abi Store] Backend API Server running on port ${PORT}`);
-  console.log(`🌐 HTTP URL:      http://localhost:${PORT}/api`);
-  console.log(`📡 WebSocket URL: ws://localhost:${PORT}/ws`);
-  console.log('================================================================');
-});
+// Start Server only if NOT running in Vercel Serverless environment
+if (process.env.VERCEL !== '1') {
+  const PORT = config.PORT || 4000;
+  httpServer.listen(PORT, () => {
+    console.log('================================================================');
+    console.log(`✨ [Ajak Abi Store] Backend API Server running on port ${PORT}`);
+    console.log(`🌐 HTTP URL:      http://localhost:${PORT}/api`);
+    console.log(`📡 WebSocket URL: ws://localhost:${PORT}/ws`);
+    console.log('================================================================');
+  });
+}
+
+// Export for Vercel Serverless Functions
+export default app;
