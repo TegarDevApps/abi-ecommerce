@@ -60,7 +60,7 @@ export const AdminLayout: React.FC = () => {
         <div className="p-5 border-b border-[#40352D] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-[#C9A227] flex items-center justify-center font-serif font-bold text-ink text-base shadow">
-              AA
+              <img src="/abi-white.png" alt="Ajak Abi Logo" className="w-5 h-5 object-contain" />
             </div>
             <div>
               <h2 className="font-serif font-bold text-base text-white tracking-tight">Admin Portal</h2>

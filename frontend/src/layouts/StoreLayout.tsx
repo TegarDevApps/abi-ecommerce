@@ -124,7 +124,7 @@ export const StoreLayout: React.FC = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
             <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white font-serif text-xl font-bold shadow-sm group-hover:bg-primary-dark transition-colors">
-              AA
+              <img src="/abi-white.png" alt="Ajak Abi Logo" className="w-6 h-6 object-contain" />
             </div>
             <div className="flex flex-col">
               <span className="font-serif font-bold text-lg text-ink tracking-tight leading-none group-hover:text-primary transition-colors">
@@ -483,7 +483,7 @@ export const StoreLayout: React.FC = () => {
             <div className="md:col-span-2 space-y-4">
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded-xl bg-[#C9A227] flex items-center justify-center text-ink font-serif text-lg font-bold">
-                  AA
+                  <img src="/abi-white.png" alt="Ajak Abi Logo" className="w-5 h-5 object-contain" />
                 </div>
                 <span className="font-serif font-bold text-xl text-white">Ajak Abi Store</span>
               </div>
