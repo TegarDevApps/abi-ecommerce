@@ -332,7 +332,7 @@ export const HomePage: React.FC = () => {
             <div className="lg:col-span-5 relative">
               <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border-2 border-[#C9A227]/40 shadow-2xl bg-[#322820]">
                 <img
-                  src="https://images.unsplash.com/photo-1565552643982-2e557b7f43e1?q=80&w=700&auto=format&fit=crop"
+                  src="/umrah-showcase.jpg"
                   alt="Kualitas perlengkapan Umrah Ajak Abi di Tanah Suci"
                   className="w-full h-full object-cover"
                 />
