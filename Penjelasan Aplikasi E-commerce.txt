@@ -1,0 +1,33 @@
+=============================================================================
+             PENJELASAN SISTEM APLIKASI WEB: AJAK ABI STORE
+=============================================================================
+1. DESKRIPSI SINGKAT
+Ajak Abi Store adalah sebuah platform E-Commerce premium khusus perlengkapan Umrah & Haji yang mendigitalkan seluruh proses belanja kebutuhan ibadah. Sistem ini memudahkan calon jamaah untuk mempersiapkan keberangkatan secara online, elegan, dan terpusat.
+
+2. BAGAIMANA CARA KERJANYA?
+Sistem ini menggunakan arsitektur web modern (React JS) yang sangat cepat (tanpa loading saat pindah halaman). Database, penyimpan foto, dan sistem keamanannya dikelola oleh Supabase (standar industri cloud yang sangat aman).
+Sistem ini memiliki 2 "Pintu Masuk" (Portal) yang berbeda. Aksesnya dipisahkan secara ketat untuk mencegah kebocoran data operasional:
+- Portal Customer (Etalase Utama): Tempat pelanggan bebas melihat katalog dan berbelanja.
+- Portal Konsol Admin (Gudang): Akses rahasia khusus pegawai/owner melalui URL khusus untuk mengontrol keseluruhan toko.
+
+3. FITUR UTAMA BERDASARKAN PORTAL
+A. PORTAL CUSTOMER (Untuk Jamaah/Pelanggan)
+Fungsinya agar jamaah bisa mempersiapkan perlengkapan umrahnya secara mandiri dari HP/Laptop.
+- Katalog & Kategori Cerdas: Etalase premium dengan pengelompokan rapi (seperti Mukena Travel Sutra, Kain Ihram Organik 100%, Koper Alumunium TSA, dan Paket Bundling).
+- Smart Cart & Checkout: Sistem keranjang belanja yang dinamis dengan formulir checkout terintegrasi untuk pengisian alamat pengiriman dan estimasi logistik.
+- Daftar Wishlist: Jamaah bisa menandai (klik ikon hati) perlengkapan yang menjadi prioritas persiapan mereka sebelum melakukan pembayaran.
+- Pusat Bantuan & Edukasi: Halaman FAQ informatif mengenai panduan ukuran ihram, garansi koper, dan aturan perlengkapan penerbangan (kabin vs bagasi).
+- Live Search Auto-complete: Pencarian cepat perlengkapan tanpa harus memuat ulang halaman.
+
+B. PORTAL KONSOL ADMIN (Untuk Operasional Gudang/Kantor Pusat)
+Fungsinya sebagai pusat kendali manajemen stok dan pesanan (Command Center).
+- Ringkasan Toko (Dashboard): Melihat statistik total penjualan harian, pesanan aktif yang belum dikirim, dan daftar produk yang stoknya mulai menipis (Low Stock Alert).
+- Manajemen Inventaris: Menambahkan produk baru, mengatur harga diskon, memperbarui deskripsi barang, dan merakit paket Bundling Hemat.
+- Proses Pesanan (Order Management): Melacak pesanan masuk, memverifikasi pembayaran (status lunas/pending), dan mengelola update resi pengiriman untuk pembeli.
+- Basis Data Pelanggan: Melihat seluruh daftar pembeli terdaftar beserta riwayat total pembelanjaan mereka (Loyalty Tracker).
+- Log Aktivitas (Audit Logs): Sistem keamanan internal tingkat tinggi yang merekam setiap aktivitas (jejak digital) admin di dalam portal (misal: "Admin A mengubah harga Ihram pada jam 10:00").
+
+4. KEUNGGULAN SISTEM
+- Tema Visual Eksekutif: Antarmuka didesain secara khusus (Dominasi Putih Tulang, Cokelat Klasik, dan Emas Madani) agar terasa premium, sejuk dipandang, dan mahal.
+- Infrastruktur Serverless Tangguh: Berjalan di atas jaringan cloud global (Vercel), memastikan website tidak akan lambat/down meskipun diakses oleh ribuan jamaah saat musim puncak (Ramadhan/Haji).
+- Sinkronisasi Data Real-time: Setiap stok produk yang dibeli jamaah akan otomatis langsung terpotong secara instan di database tanpa *delay*.
